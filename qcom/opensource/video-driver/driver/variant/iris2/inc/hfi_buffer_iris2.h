@@ -18,12 +18,12 @@ typedef s32 HFI_S32;
 typedef u64 HFI_U64;
 typedef HFI_U32 HFI_BOOL;
 
-#ifndef MIN
-#define  MIN(x, y) (((x) < (y)) ? (x) : (y))
+#ifndef IRIS2_MIN
+#define  IRIS2_MIN(x, y) (((x) < (y)) ? (x) : (y))
 #endif
 
-#ifndef MAX
-#define  MAX(x, y) (((x) > (y)) ? (x) : (y))
+#ifndef IRIS2_MAX
+#define  IRIS2_MAX(x, y) (((x) > (y)) ? (x) : (y))
 #endif
 
 #define HFI_ALIGNMENT_4096 (4096)
@@ -309,7 +309,7 @@ typedef HFI_U32 HFI_BOOL;
 		HFI_ALIGN(opb_wr_top_line_luma_buffer_size, \
 		VENUS_DMA_ALIGNMENT) + (MAX_TILE_COLUMNS - 1) * 256; \
 		opb_wr_top_line_luma_buffer_size = \
-		MAX(opb_wr_top_line_luma_buffer_size, (32 * \
+		IRIS2_MAX(opb_wr_top_line_luma_buffer_size, (32 * \
 			HFI_ALIGN(frame_height, 8))); \
 		opb_wr_top_line_chroma_buffer_size = \
 			opb_wr_top_line_luma_buffer_size;\
@@ -370,7 +370,7 @@ typedef HFI_U32 HFI_BOOL;
 	{    \
 		HFI_U32 _height = HFI_ALIGN(frame_height, \
 				BUFFER_ALIGNMENT_32_BYTES);  \
-		_size = MIN((((_height + 15) >> 4) * 3 * 4), H264D_MAX_SLICE) *\
+		_size = IRIS2_MIN((((_height + 15) >> 4) * 3 * 4), H264D_MAX_SLICE) *\
 					  SIZE_H264D_BSE_CMD_PER_BUF; \
 	} while (0)
 
@@ -379,7 +379,7 @@ typedef HFI_U32 HFI_BOOL;
 	{    \
 		HFI_U32 _height = HFI_ALIGN(frame_height, \
 				BUFFER_ALIGNMENT_32_BYTES); \
-		_size = MIN((((_height + 15) >> 4) * 3 * 4), H264D_MAX_SLICE) * \
+		_size = IRIS2_MIN((((_height + 15) >> 4) * 3 * 4), H264D_MAX_SLICE) * \
 					SIZE_H264D_VPP_CMD_PER_BUF; \
 		if (_size > VPP_CMD_MAX_SIZE) { _size = VPP_CMD_MAX_SIZE; } \
 	} while (0)
@@ -539,9 +539,9 @@ typedef HFI_U32 HFI_BOOL;
 	((LCU_MAX_SIZE_PELS / 8 * (128 / 8)) * ((frame_width + 15) >> 4))
 
 #define SIZE_H265D_LB_SE_LEFT_CTRL(frame_width, frame_height)    \
-	(MAX(((frame_height + 16 - 1) / 8) * \
+	(IRIS2_MAX(((frame_height + 16 - 1) / 8) * \
 		MAX_SE_NBR_CTRL_LCU16_LINE_BUFFER_SIZE,     \
-	MAX(((frame_height + 32 - 1) / 8) * \
+	IRIS2_MAX(((frame_height + 32 - 1) / 8) * \
 		MAX_SE_NBR_CTRL_LCU32_LINE_BUFFER_SIZE, \
 	((frame_height + 64 - 1) / 8) * \
 		MAX_SE_NBR_CTRL_LCU64_LINE_BUFFER_SIZE)))
@@ -569,7 +569,7 @@ typedef HFI_U32 HFI_BOOL;
 		LCU_MAX_SIZE_PELS) / LCU_MIN_SIZE_PELS) * \
 		(HFI_ALIGN(frame_height, LCU_MAX_SIZE_PELS) /\
 		LCU_MIN_SIZE_PELS)) * NUM_HW_PIC_BUF, VENUS_DMA_ALIGNMENT);  \
-		_size = MIN(_size, H265D_MAX_SLICE + 1);          \
+		_size = IRIS2_MIN(_size, H265D_MAX_SLICE + 1);          \
 		_size = 2 * _size * SIZE_H265D_BSE_CMD_PER_BUF;     \
 	} while (0)
 
@@ -580,7 +580,7 @@ typedef HFI_U32 HFI_BOOL;
 		LCU_MIN_SIZE_PELS) * (HFI_ALIGN(frame_height, \
 		LCU_MAX_SIZE_PELS) / LCU_MIN_SIZE_PELS)) * \
 		NUM_HW_PIC_BUF, VENUS_DMA_ALIGNMENT);  \
-		_size = MIN(_size, H265D_MAX_SLICE + 1);    \
+		_size = IRIS2_MIN(_size, H265D_MAX_SLICE + 1);    \
 		_size = HFI_ALIGN(_size, 4);  \
 		_size = 2 * _size * SIZE_H265D_VPP_CMD_PER_BUF; \
 		if (_size > VPP_CMD_MAX_SIZE)      \
@@ -717,9 +717,9 @@ typedef HFI_U32 HFI_BOOL;
 	VENUS_DMA_ALIGNMENT)
 
 #define SIZE_VPXD_LB_FE_LEFT_CTRL(frame_width, frame_height)   \
-	MAX(((frame_height + 15) >> 4) * \
+	IRIS2_MAX(((frame_height + 15) >> 4) * \
 	MAX_FE_NBR_CTRL_LCU16_LINE_BUFFER_SIZE, \
-	MAX(((frame_height + 31) >> 5) * \
+	IRIS2_MAX(((frame_height + 31) >> 5) * \
 	MAX_FE_NBR_CTRL_LCU32_LINE_BUFFER_SIZE, \
 	((frame_height + 63) >> 6) * MAX_FE_NBR_CTRL_LCU64_LINE_BUFFER_SIZE))
 #define SIZE_VPXD_LB_FE_TOP_CTRL(frame_width, frame_height) \
@@ -727,9 +727,9 @@ typedef HFI_U32 HFI_BOOL;
 #define SIZE_VPXD_LB_SE_TOP_CTRL(frame_width, frame_height) \
 	(((frame_width + 15) >> 4) * MAX_FE_NBR_CTRL_LCU16_LINE_BUFFER_SIZE)
 #define SIZE_VPXD_LB_SE_LEFT_CTRL(frame_width, frame_height)  \
-	MAX(((frame_height + 15) >> 4) * \
+	IRIS2_MAX(((frame_height + 15) >> 4) * \
 	MAX_SE_NBR_CTRL_LCU16_LINE_BUFFER_SIZE,\
-	MAX(((frame_height + 31) >> 5) * \
+	IRIS2_MAX(((frame_height + 31) >> 5) * \
 	MAX_SE_NBR_CTRL_LCU32_LINE_BUFFER_SIZE, \
 	((frame_height + 63) >> 6) * MAX_SE_NBR_CTRL_LCU64_LINE_BUFFER_SIZE))
 #define SIZE_VPXD_LB_RECON_DMA_METADATA_WR(frame_width, frame_height) \
@@ -806,11 +806,11 @@ typedef HFI_U32 HFI_BOOL;
 		HFI_ALIGN(frame_height, BUFFER_ALIGNMENT_16_BYTES) * 3 / 2;  \
 		if (!is_interlaced)  \
 		{               \
-			_size = HFI_ALIGN(((MAX(_size_yuv, \
+			_size = HFI_ALIGN(((IRIS2_MAX(_size_yuv, \
 			((BIN_BUFFER_THRESHOLD * 3) >> 1)) * \
 			VPX_DECODER_FRAME_BIN_HDR_BUDGET_RATIO * \
 			VPX_DECODER_FRAME_CONCURENCY_LVL) / num_vpp_pipes), \
-			VENUS_DMA_ALIGNMENT) + HFI_ALIGN(((MAX(_size_yuv, \
+			VENUS_DMA_ALIGNMENT) + HFI_ALIGN(((IRIS2_MAX(_size_yuv, \
 			((BIN_BUFFER_THRESHOLD * 3) >> 1)) * \
 			VPX_DECODER_FRAME_BIN_RES_BUDGET_RATIO * \
 			VPX_DECODER_FRAME_CONCURENCY_LVL) / num_vpp_pipes), \
@@ -1267,7 +1267,7 @@ _yuv_bufcount_min, is_opb, num_vpp_pipes)           \
 #define SIZE_VPSS_LINE_BUF(num_vpp_pipes_enc, frame_height_coded, \
 			frame_width_coded) \
 	(HFI_ALIGN(((((((8192) >> 2) << 5) * (num_vpp_pipes_enc)) + 64) + \
-	(((((MAX((frame_width_coded), (frame_height_coded)) + 3) >> 2) << 5) +\
+	(((((IRIS2_MAX((frame_width_coded), (frame_height_coded)) + 3) >> 2) << 5) +\
     256) * 16)), VENUS_DMA_ALIGNMENT))
 
 #define SIZE_TOP_LINE_BUF_FIRST_STG_SAO(frame_width_coded) \
